@@ -41,18 +41,16 @@ export class UserService {
     );
   }
   async update(id: string, updateUserDto: updateUserDto): Promise<User> {
-    //TODO need to check, if the revTag is already in use, before updating, bcs it needs to be unique in prisma
-    // if (
-    //   (await this.findOne(id)) !==
-    //   (await this.prisma.user.findFirst({
-    //     where: { revTag: updateUserDto.revTag },
-    //   }))
-    // ) {
-    //   throw new ConflictException('Revolut tag already in use');
-    // }
-    return await this.prisma.user.update({
-      where: { id },
-      data: updateUserDto,
-    });
+    if (
+      !updateUserDto.revTag || //if revTag is not updated
+      (await this.findOne(id)).revTag === updateUserDto.revTag || //or revTag is updated, but the same, as before
+      (await this.revTagAvailable(updateUserDto.revTag)) //and if it is really updated, check if its available
+    ) {
+      return await this.prisma.user.update({
+        where: { id },
+        data: updateUserDto,
+      });
+    }
+    throw new ConflictException('Revolut tag already in use');
   }
 }
