@@ -1,6 +1,7 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, isUUID } from 'class-validator';
 
 export class User {
+  @IsUUID()
   id: string;
 
   @IsString()

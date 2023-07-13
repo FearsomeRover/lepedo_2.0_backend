@@ -8,8 +8,20 @@ datasource db {
 }
 
 model User {
-  id     String    @id @default(uuid())
-  name   String
-  revTag String    @unique
-  color  String
+  id           String     @id @default(uuid())
+  name         String
+  revTag       String     @unique
+  color        String
+  TransferFrom Transfer[] @relation(name: "UserFrom")
+  TransferTo   Transfer[] @relation(name: "UserTo")
+}
+
+model Transfer {
+  id         String @id @default(uuid())
+  date       String
+  userFrom   User   @relation(fields: [userFromId], references: [id], name: "UserFrom")
+  userFromId String
+  userTo     User   @relation(fields: [userToId], references: [id], name: "UserTo")
+  userToId   String
+  amount     Int
 }
