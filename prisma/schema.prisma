@@ -12,16 +12,26 @@ model User {
   name         String
   revTag       String     @unique
   color        String
-  TransferFrom Transfer[] @relation(name: "UserFrom")
-  TransferTo   Transfer[] @relation(name: "UserTo")
+  payed  Expense[] @relation("Payer")
+  recieved  Expense[] @relation("Received")
+  transferredTo Transfer[] @relation("userTo")
+  transferredFrom Transfer[] @relation("userFrom")
 }
 
-model Transfer {
-  id         String @id @default(uuid())
-  date       String
-  userFrom   User   @relation(fields: [userFromId], references: [id], name: "UserFrom")
+model Expense {
+  id          String      @id @default(uuid())
+  title       String
+  amount      Int
+  payer       User     @relation("Payer", fields: [payerId], references: [id])
+  payerId     String
+  received    User[]   @relation("Received")
+}
+
+model Transfer{
+  id String @id @default(uuid())
+  date DateTime
+  userFrom User @relation("userFrom", fields: [userFromId], references: [id])
   userFromId String
-  userTo     User   @relation(fields: [userToId], references: [id], name: "UserTo")
-  userToId   String
-  amount     Int
+  userTo User @relation("userTo", fields: [userToId], references: [id])
+  userToId String
 }
