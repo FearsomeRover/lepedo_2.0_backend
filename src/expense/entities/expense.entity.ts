@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
+import { User } from 'src/user/entities/user.entity';
 
 export class Expense {
   @IsUUID()
@@ -9,8 +10,7 @@ export class Expense {
 
   @IsNotEmpty()
   amount: number;
-  //date: string;
-  //payer: User;
+  payer: User;
 
   @IsNotEmpty()
   @IsUUID()

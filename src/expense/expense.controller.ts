@@ -32,11 +32,11 @@ export class ExpenseController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateExpenseDto: UpdateExpenseDto) {
-    return this.expenseService.update(+id, updateExpenseDto);
+    return this.expenseService.update(id, updateExpenseDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.expenseService.remove(+id);
+    return this.expenseService.remove(id);
   }
 }

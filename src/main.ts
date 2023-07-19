@@ -11,10 +11,9 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-      //forbidUnknownValues: true,
+      forbidUnknownValues: true,
     }),
   );
-  const prismaService: PrismaService = app.get(PrismaService);
   await app.listen(PORT);
 }
 bootstrap();
