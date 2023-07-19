@@ -18,8 +18,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
   getTable() {
-    const table = this.userService.getTable();
-    const stats = this.userService.getSummaryStats(table);
+    return this.userService.getTable();
   }
   @Post()
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
