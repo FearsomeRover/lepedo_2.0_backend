@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { PrismaService } from 'src/prisma.service';
-import { Expense } from './entities/expense.entity';
+import { Expense } from '@prisma/client';
 
 @Injectable()
 export class ExpenseService {
@@ -22,20 +22,27 @@ export class ExpenseService {
     });
   }
 
-  async findAll() {
+  async findAll(): Promise<Expense[]> {
     return await this.prisma.expense.findMany({
-      include: { received: true },
+      include: { received: true, payer: true },
     });
   }
 
-  async findOne(id: string) {
-    return await this.prisma.expense.findUnique({
+  async findOne(id: string): Promise<Expense> {
+    const res = await this.prisma.expense.findUnique({
       where: { id },
-      include: { received: true },
+      include: { received: true, payer: true },
     });
+    if (!res) {
+      throw new NotFoundException('This id does not exist');
+    }
+    return res;
   }
 
-  async update(id: string, updateExpenseDto: UpdateExpenseDto) {
+  async update(
+    id: string,
+    updateExpenseDto: UpdateExpenseDto,
+  ): Promise<Expense> {
     const data = {
       title: updateExpenseDto.title,
       amount: updateExpenseDto.amount,
@@ -60,7 +67,7 @@ export class ExpenseService {
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<void> {
     const res = await this.prisma.expense.deleteMany({
       where: { id },
     });

@@ -1,6 +1,6 @@
+import { User } from '@prisma/client';
 import { CreateUserDto } from './dto/createUser.dto';
-import { updateUserDto } from './dto/updateUser.dto';
-import { User } from './entities/user.entity';
+import { UpdateUserDto } from './dto/updateUser.dto';
 import { UserService } from './user.service';
 import {
   Body,
@@ -33,7 +33,7 @@ export class UserController {
     return this.userService.delete(id);
   }
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: updateUserDto) {
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
   @Get('/revTag/:revTag')

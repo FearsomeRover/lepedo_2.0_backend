@@ -25,11 +25,13 @@ model Expense {
   payer       User     @relation("Payer", fields: [payerId], references: [id])
   payerId     String
   received    User[]   @relation("Received")
+  date String?
 }
 
 model Transfer{
   id String @id @default(uuid())
-  date DateTime
+  date String?
+  amount Int
   userFrom User @relation("userFrom", fields: [userFromId], references: [id])
   userFromId String
   userTo User @relation("userTo", fields: [userToId], references: [id])
