@@ -103,9 +103,11 @@ export class UserService {
 
     return {
       table: final,
-      thrifty: curminname,
-      doneall: doneall,
-      spentall: spentall,
+      stats: {
+        thrifty: curminname,
+        doneall: doneall,
+        spentall: spentall,
+      },
     };
   }
 
