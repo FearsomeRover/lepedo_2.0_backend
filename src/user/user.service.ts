@@ -32,10 +32,16 @@ export class UserService {
       }
     }
   }
+  async findAll() {
+    return this.prisma.user.findMany();
+  }
 
   async getTable() {
     //haaat ez eleg undi...
     const u = await this.prisma.user.findMany();
+    if (u.length === 0) {
+      throw new NotFoundException('There are no users');
+    }
     let e = await this.prisma.expense.findMany({
       include: { received: true },
     });

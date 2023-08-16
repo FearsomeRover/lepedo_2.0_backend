@@ -17,6 +17,10 @@ import {
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
+  findAll() {
+    return this.userService.findAll();
+  }
+  @Get('/table')
   getTable() {
     return this.userService.getTable();
   }
