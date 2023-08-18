@@ -12,6 +12,7 @@ export class ExpenseService {
       data: {
         title: createExpenseDto.title,
         amount: createExpenseDto.amount,
+        date: createExpenseDto.date,
         payer: {
           connect: { id: createExpenseDto.payerId },
         },
