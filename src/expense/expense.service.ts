@@ -52,12 +52,12 @@ export class ExpenseService {
     };
     if (updateExpenseDto.received) {
       data.received = {
-        connect: updateExpenseDto.received.map((userId) => ({ id: userId })),
+        set: updateExpenseDto.received.map((userId) => ({ id: userId })),
       };
     }
     if (updateExpenseDto.payerId) {
       data.payer = {
-        connect: {
+        set: {
           id: updateExpenseDto.payerId,
         },
       };
@@ -65,6 +65,7 @@ export class ExpenseService {
     return await this.prisma.expense.update({
       where: { id },
       data: data,
+      include: { received: true },
     });
   }
 
