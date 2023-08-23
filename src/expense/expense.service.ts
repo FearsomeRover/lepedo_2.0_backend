@@ -65,7 +65,6 @@ export class ExpenseService {
     return await this.prisma.expense.update({
       where: { id },
       data: data,
-      include: { received: true },
     });
   }
 

@@ -57,7 +57,8 @@ export class TransferService {
         connect: { id: updateTransferDto.userToId },
       };
     }
-    return await this.prisma.transfer.create({
+    return await this.prisma.transfer.update({
+      where: { id },
       data: data,
     });
   }
