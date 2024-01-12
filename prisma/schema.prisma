@@ -3,37 +3,37 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String     @id @default(uuid())
-  name         String
-  revTag       String     @unique
-  color        String
-  payed  Expense[] @relation("Payer")
-  recieved  Expense[] @relation("Received")
-  transferredTo Transfer[] @relation("userTo")
+  id              String     @id @default(uuid())
+  name            String
+  revTag          String     @unique
+  color           String
+  payed           Expense[]  @relation("Payer")
+  recieved        Expense[]  @relation("Received")
+  transferredTo   Transfer[] @relation("userTo")
   transferredFrom Transfer[] @relation("userFrom")
 }
 
 model Expense {
-  id          String      @id @default(uuid())
-  title       String
-  amount      Int
-  payer       User     @relation("Payer", fields: [payerId], references: [id])
-  payerId     String
-  received    User[]   @relation("Received")
-  date String?
+  id       String  @id @default(uuid())
+  title    String
+  amount   Int
+  payer    User    @relation("Payer", fields: [payerId], references: [id])
+  payerId  String
+  received User[]  @relation("Received")
+  date     String?
 }
 
-model Transfer{
-  id String @id @default(uuid())
-  date String?
-  amount Int
-  userFrom User @relation("userFrom", fields: [userFromId], references: [id])
+model Transfer {
+  id         String  @id @default(uuid())
+  date       String?
+  amount     Int
+  userFrom   User    @relation("userFrom", fields: [userFromId], references: [id])
   userFromId String
-  userTo User @relation("userTo", fields: [userToId], references: [id])
-  userToId String
+  userTo     User    @relation("userTo", fields: [userToId], references: [id])
+  userToId   String
 }
