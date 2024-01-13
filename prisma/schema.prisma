@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model User {
@@ -16,6 +16,15 @@ model User {
   recieved        Expense[]  @relation("Received")
   transferredTo   Transfer[] @relation("userTo")
   transferredFrom Transfer[] @relation("userFrom")
+}
+
+model AuthUser {
+  id       String  @id
+  nickName String
+  fullName String
+  revTag   String
+  email    String
+  isAdmin  Boolean
 }
 
 model Expense {
