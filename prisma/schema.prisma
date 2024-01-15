@@ -24,8 +24,8 @@ model Expense {
   id            String        @id @default(uuid())
   title         String
   amount        Int
-  payer         User          @relation("Payer", fields: [payerId], references: [id])
   payerId       String
+  payer         User          @relation("Payer", fields: [payerId], references: [id])
   expenseItemId String
   items         ExpenseItem[]
   date          String?
@@ -36,8 +36,8 @@ model ExpenseItem {
   name         String
   price        Int
   participants Participant[]
-  expense      Expense       @relation(fields: [expenseId], references: [id])
   expenseId    String
+  expense      Expense       @relation(fields: [expenseId], references: [id])
 }
 
 model Participant {
@@ -47,22 +47,22 @@ model Participant {
   userId        String
   user          User        @relation(fields: [userId], references: [id])
   shares        Float
+  isAccepted    Boolean
 }
 
 model Transfer {
   id         String  @id @default(uuid())
   date       String?
   amount     Int
-  userFrom   User    @relation("userFrom", fields: [userFromId], references: [id])
   userFromId String
-  userTo     User    @relation("userTo", fields: [userToId], references: [id])
+  userFrom   User    @relation("userFrom", fields: [userFromId], references: [id])
   userToId   String
+  userTo     User    @relation("userTo", fields: [userToId], references: [id])
 }
 
 model QR {
   id      String @id @default(uuid())
   amount  Int
   payToId String
-  payTo   User   @relation(fields: [userId], references: [id])
-  userId  String
+  payTo   User   @relation(fields: [payToId], references: [id])
 }
