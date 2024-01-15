@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model User {
@@ -18,6 +18,8 @@ model User {
   transferredTo   Transfer[]    @relation("userTo")
   transferredFrom Transfer[]    @relation("userFrom")
   QR              QR[]
+  Owes1           Owes[]        @relation("user1")
+  Owes2           Owes[]        @relation("user2")
 }
 
 model Expense {
@@ -40,13 +42,13 @@ model ExpenseItem {
 }
 
 model Participant {
-  id            String      @id @default(uuid())
+  id            String        @id @default(uuid())
   expenseItemId String
-  item          ExpenseItem @relation(fields: [expenseItemId], references: [id])
+  item          ExpenseItem   @relation(fields: [expenseItemId], references: [id])
   userId        String
-  user          User        @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
   shares        Float
-  isAccepted    Boolean
+  isAccepted    ExpenseStatus
 }
 
 model Transfer {
@@ -64,4 +66,19 @@ model QR {
   amount  Int
   payToId String
   payTo   User   @relation(fields: [payToId], references: [id])
+}
+
+enum ExpenseStatus {
+  ACCEPTED
+  DECLINED
+  NONE
+}
+
+model Owes {
+  id      String @id @default(uuid())
+  user1   User   @relation("user1", fields: [user1Id], references: [id])
+  user2   User   @relation("user2", fields: [user2Id], references: [id])
+  amount  Int
+  user1Id String
+  user2Id String
 }
