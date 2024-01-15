@@ -1,21 +1,25 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
-import { User } from 'src/user/entities/user.entity';
+import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsUUID } from 'class-validator'
+import { ExpenseItem } from 'src/expense-item/entities/expense-item.entity'
+import { User } from 'src/user/entities/user.entity'
 
 export class Expense {
-  @IsUUID()
-  id: string;
+    @IsUUID()
+    id: string
 
-  @IsNotEmpty()
-  title: string;
+    @IsNotEmpty()
+    title: string
 
-  @IsNotEmpty()
-  amount: number;
-  payer: User;
+    @IsNotEmpty()
+    @IsPositive()
+    amount: number
 
-  @IsNotEmpty()
-  @IsUUID()
-  payerId: string;
+    @IsNotEmpty()
+    payer: User
 
-  @IsNotEmpty()
-  received: string[];
+    @IsNotEmpty()
+    items: ExpenseItem[]
+
+    @IsDateString()
+    @IsOptional()
+    date: string
 }

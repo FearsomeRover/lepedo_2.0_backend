@@ -21,14 +21,13 @@ model User {
 }
 
 model Expense {
-  id            String        @id @default(uuid())
-  title         String
-  amount        Int
-  payerId       String
-  payer         User          @relation("Payer", fields: [payerId], references: [id])
-  expenseItemId String
-  items         ExpenseItem[]
-  date          String?
+  id      String        @id @default(uuid())
+  title   String
+  amount  Int
+  payerId String
+  payer   User          @relation("Payer", fields: [payerId], references: [id])
+  items   ExpenseItem[]
+  date    String?
 }
 
 model ExpenseItem {
