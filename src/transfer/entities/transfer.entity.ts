@@ -1,29 +1,27 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsNumberString, IsPositive, IsString, IsUUID, Max, Min, isPositive } from 'class-validator'
+import { IsDateString, IsNotEmpty, IsNumber, IsNumberString, IsPositive, IsString, IsUUID, Max, Min, isPositive, isUUID } from 'class-validator'
 import { User } from 'src/user/entities/user.entity'
 
 export class Transfer {
     @IsUUID()
     id: string
 
+    @IsNotEmpty()
+    title: string
+
     @IsDateString()
     @IsNotEmpty()
     date: string
 
     @IsNotEmpty()
-    userFrom: User
+    @IsUUID()
+    userFromId: string
 
     @IsNotEmpty()
-    userTo: User
+    @IsUUID()
+    userToId: string
 
     @IsNumber()
     @IsNotEmpty()
     @IsPositive()
     amount: number
 }
-// export class Transfer {
-//   id: string;
-//   date: string;
-//   userFromId: string;
-//   userToId: string;
-//   amount: number;
-// }

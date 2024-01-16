@@ -1,6 +1,6 @@
 import { User } from '@prisma/client'
 import { IsUUID, Max, Min } from 'class-validator'
-import { ExpenseItem } from 'src/expense-item/entities/expense-item.entity'
+import { ExpenseItem } from 'src/expense/entities/expense-item.entity'
 
 export class Participant {
     @IsUUID()
@@ -14,7 +14,7 @@ export class Participant {
 
     @Max(1)
     @Min(0)
-    shares: number
+    amount: number
 
     isAccepted: boolean
 }

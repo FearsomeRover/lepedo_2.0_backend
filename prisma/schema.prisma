@@ -53,6 +53,7 @@ model Participant {
 
 model Transfer {
   id         String  @id @default(uuid())
+  title      String
   date       String?
   amount     Int
   userFromId String

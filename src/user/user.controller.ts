@@ -2,7 +2,7 @@ import { User } from '@prisma/client'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { UserService } from './user.service'
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
 
 @Controller('user')
 export class UserController {
@@ -14,10 +14,6 @@ export class UserController {
     @Post()
     create(@Body() createUserDto: CreateUserDto): Promise<User> {
         return this.userService.create(createUserDto)
-    }
-    @Get('/table')
-    getTable() {
-        return this.userService.getTable()
     }
     @Get(':id')
     findOne(@Param('id') id: string): Promise<User> {

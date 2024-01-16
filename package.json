@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "nest start ",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -36,7 +36,9 @@
     "passport-jwt": "^4.0.1",
     "passport-oauth2": "^1.7.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "run-script-webpack-plugin": "^0.2.0",
+    "rxjs": "^7.8.1",
+    "webpack": "^5.89.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

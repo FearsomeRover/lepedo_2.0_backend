@@ -10,5 +10,6 @@ export class Qr {
     amount: number
 
     @IsNotEmpty()
-    payTo: User
+    @IsUUID()
+    payToId: string
 }

@@ -1,6 +1,6 @@
 import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsUUID } from 'class-validator'
-import { ExpenseItem } from 'src/expense-item/entities/expense-item.entity'
 import { User } from 'src/user/entities/user.entity'
+import { ExpenseItem } from './expense-item.entity'
 
 export class Expense {
     @IsUUID()
@@ -14,7 +14,8 @@ export class Expense {
     amount: number
 
     @IsNotEmpty()
-    payer: User
+    @IsUUID()
+    payerId: string
 
     @IsNotEmpty()
     items: ExpenseItem[]

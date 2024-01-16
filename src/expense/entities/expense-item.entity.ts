@@ -14,7 +14,7 @@ export class ExpenseItem {
     price: number
 
     @IsNotEmpty()
-    participants: Participant
+    participants: Participant[]
 
     @IsNotEmpty()
     expense: Expense
