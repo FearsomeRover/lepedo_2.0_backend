@@ -9,8 +9,7 @@ export class ExpenseController {
     constructor(private readonly expenseService: ExpenseService) {}
 
     @Post()
-    create(@Body() createExpenseDto: CreateExpenseDto) {
-        console.log(createExpenseDto)
+    create(@Body() createExpenseDto: CreateExpenseDto): Promise<Expense> {
         return this.expenseService.create(createExpenseDto)
     }
 

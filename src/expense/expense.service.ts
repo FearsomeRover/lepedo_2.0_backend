@@ -8,7 +8,7 @@ import { Expense, ExpenseStatus } from '@prisma/client'
 export class ExpenseService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(createExpenseDto: CreateExpenseDto) {
+    async create(createExpenseDto: CreateExpenseDto): Promise<Expense> {
         /*steps:
         create new expense
         create items
@@ -35,7 +35,7 @@ export class ExpenseService {
                 },
             })
             for (const part of item.participants) {
-                await this.prisma.participant.create({
+                this.prisma.participant.create({
                     data: {
                         item: {
                             connect: { id: dbItem.id },
@@ -49,16 +49,20 @@ export class ExpenseService {
                 })
             }
         }
+        return expense
     }
 
-    async findAll() {
-        return await this.prisma.expense.findMany({
-            include: { payer: true },
+    async findAll(): Promise<Expense[]> {
+        return this.prisma.expense.findMany({
+            include: { payer: true, items: { include: { participants: true } } },
         })
     }
 
-    async findOne(id: string) {
-        return 'This action adds a new expense'
+    async findOne(id: string): Promise<Expense> {
+        return this.prisma.expense.findUnique({
+            where: { id },
+            include: { payer: true, items: { include: { participants: true } } },
+        })
     }
 
     async update(id: string, updateExpenseDto: UpdateExpenseDto) {
