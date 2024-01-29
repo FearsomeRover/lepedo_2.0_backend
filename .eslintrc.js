@@ -15,6 +15,6 @@ module.exports = {
     ignorePatterns: ['.eslintrc.js'],
     rules: {
         '@typescript-eslint/no-explicit-any': 'off',
-        'prettier/prettier': 'error',
+        'prettier/prettier': 'warn',
     },
 }

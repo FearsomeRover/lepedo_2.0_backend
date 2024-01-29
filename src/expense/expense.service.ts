@@ -1,78 +1,75 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateExpenseDto } from './dto/create-expense.dto';
-import { UpdateExpenseDto } from './dto/update-expense.dto';
-import { PrismaService } from 'src/prisma.service';
-import { Expense } from '@prisma/client';
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { CreateExpenseDto } from './dto/create-expense.dto'
+import { UpdateExpenseDto } from './dto/update-expense.dto'
+import { PrismaService } from 'src/prisma.service'
+import { Expense, ExpenseStatus } from '@prisma/client'
 
 @Injectable()
 export class ExpenseService {
-  constructor(private readonly prisma: PrismaService) {}
-  async create(createExpenseDto: CreateExpenseDto) {
-    return await this.prisma.expense.create({
-      data: {
-        title: createExpenseDto.title,
-        amount: createExpenseDto.amount,
-        payer: {
-          connect: { id: createExpenseDto.payerId },
-        },
-        received: {
-          connect: createExpenseDto.received.map((userId) => ({ id: userId })),
-        },
-      },
-    });
-  }
+    constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<Expense[]> {
-    return await this.prisma.expense.findMany({
-      include: { received: true, payer: true },
-    });
-  }
+    async create(createExpenseDto: CreateExpenseDto): Promise<Expense> {
+        /*steps:
+        create new expense
+        create items
+        create participants
+        */
+        const expense = await this.prisma.expense.create({
+            data: {
+                title: createExpenseDto.title,
+                payer: {
+                    connect: { id: createExpenseDto.payerId },
+                },
+                date: createExpenseDto.date,
+                amount: createExpenseDto.amount,
+            },
+        })
+        for (const item of createExpenseDto.items) {
+            const dbItem = await this.prisma.expenseItem.create({
+                data: {
+                    expense: {
+                        connect: { id: expense.id },
+                    },
+                    name: item.name,
+                    price: item.price,
+                },
+            })
+            for (const part of item.participants) {
+                this.prisma.participant.create({
+                    data: {
+                        item: {
+                            connect: { id: dbItem.id },
+                        },
+                        user: {
+                            connect: { id: part.userId },
+                        },
+                        amount: part.amount,
+                        isAccepted: ExpenseStatus.NONE,
+                    },
+                })
+            }
+        }
+        return expense
+    }
 
-  async findOne(id: string): Promise<Expense> {
-    const res = await this.prisma.expense.findUnique({
-      where: { id },
-      include: { received: true, payer: true },
-    });
-    if (!res) {
-      throw new NotFoundException('This id does not exist');
+    async findAll(): Promise<Expense[]> {
+        return this.prisma.expense.findMany({
+            include: { payer: true, items: { include: { participants: true } } },
+        })
     }
-    return res;
-  }
 
-  async update(
-    id: string,
-    updateExpenseDto: UpdateExpenseDto,
-  ): Promise<Expense> {
-    const data = {
-      title: updateExpenseDto.title,
-      amount: updateExpenseDto.amount,
-      received: undefined,
-      payer: undefined,
-    };
-    if (updateExpenseDto.received) {
-      data.received = {
-        connect: updateExpenseDto.received.map((userId) => ({ id: userId })),
-      };
+    async findOne(id: string): Promise<Expense> {
+        return this.prisma.expense.findUnique({
+            where: { id },
+            include: { payer: true, items: { include: { participants: true } } },
+        })
     }
-    if (updateExpenseDto.payerId) {
-      data.payer = {
-        connect: {
-          id: updateExpenseDto.payerId,
-        },
-      };
-    }
-    return await this.prisma.expense.update({
-      where: { id },
-      data: data,
-    });
-  }
 
-  async remove(id: string): Promise<void> {
-    const res = await this.prisma.expense.deleteMany({
-      where: { id },
-    });
-    if (!res.count) {
-      throw new NotFoundException('This id does not exist');
+    async update(id: string, updateExpenseDto: UpdateExpenseDto) {
+        return 'This action adds a new expense'
     }
-  }
+
+    async remove(id: string) {
+        return 'This action adds a new expense'
+    }
 }

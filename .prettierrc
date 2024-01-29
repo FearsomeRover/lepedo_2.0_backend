@@ -8,5 +8,6 @@
     "bracketSameLine": false,
     "endOfLine": "auto",
     "tabWidth": 4,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "skipBlankLines": true
 }

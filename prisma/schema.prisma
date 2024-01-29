@@ -4,45 +4,82 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model User {
-  id              String     @id @default(uuid())
+  id              String        @id @default(uuid())
   name            String
-  revTag          String     @unique
+  revTag          String        @unique
   color           String
-  payed           Expense[]  @relation("Payer")
-  recieved        Expense[]  @relation("Received")
-  transferredTo   Transfer[] @relation("userTo")
-  transferredFrom Transfer[] @relation("userFrom")
-}
-
-model AuthUser {
-  id       String  @id
-  nickName String
-  fullName String
-  revTag   String
-  email    String
-  isAdmin  Boolean
+  auth0sub        String        @unique
+  payed           Expense[]     @relation("Payer")
+  participatedIn  Participant[]
+  transferredTo   Transfer[]    @relation("userTo")
+  transferredFrom Transfer[]    @relation("userFrom")
+  QR              QR[]
+  Owes1           Owes[]        @relation("user1")
+  Owes2           Owes[]        @relation("user2")
 }
 
 model Expense {
-  id       String  @id @default(uuid())
-  title    String
-  amount   Int
-  payer    User    @relation("Payer", fields: [payerId], references: [id])
-  payerId  String
-  received User[]  @relation("Received")
-  date     String?
+  id      String        @id @default(uuid())
+  title   String
+  amount  Int
+  payerId String
+  payer   User          @relation("Payer", fields: [payerId], references: [id])
+  items   ExpenseItem[]
+  date    String?
+}
+
+model ExpenseItem {
+  id           String        @id @default(uuid())
+  name         String
+  price        Int
+  participants Participant[]
+  expenseId    String
+  expense      Expense       @relation(fields: [expenseId], references: [id])
+}
+
+model Participant {
+  id            String        @id @default(uuid())
+  expenseItemId String
+  item          ExpenseItem   @relation(fields: [expenseItemId], references: [id])
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  amount        Float
+  isAccepted    ExpenseStatus
 }
 
 model Transfer {
   id         String  @id @default(uuid())
+  title      String
   date       String?
   amount     Int
-  userFrom   User    @relation("userFrom", fields: [userFromId], references: [id])
   userFromId String
-  userTo     User    @relation("userTo", fields: [userToId], references: [id])
+  userFrom   User    @relation("userFrom", fields: [userFromId], references: [id])
   userToId   String
+  userTo     User    @relation("userTo", fields: [userToId], references: [id])
+}
+
+model QR {
+  id      String @id @default(uuid())
+  amount  Int
+  payToId String
+  payTo   User   @relation(fields: [payToId], references: [id])
+}
+
+enum ExpenseStatus {
+  ACCEPTED
+  DECLINED
+  NONE
+}
+
+model Owes {
+  id      String @id @default(uuid())
+  user1   User   @relation("user1", fields: [user1Id], references: [id])
+  user2   User   @relation("user2", fields: [user2Id], references: [id])
+  amount  Int
+  user1Id String
+  user2Id String
 }
