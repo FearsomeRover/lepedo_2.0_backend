@@ -14,6 +14,7 @@ export class ExpenseService {
         create items
         create participants
         */
+        let owes = new Map<string, number>()
         const expense = await this.prisma.expense.create({
             data: {
                 title: createExpenseDto.title,
@@ -35,6 +36,12 @@ export class ExpenseService {
                 },
             })
             for (const part of item.participants) {
+                const prevAmount = owes.get(part.userId)
+                if (prevAmount) {
+                    owes.set(part.userId, prevAmount + part.amount)
+                } else {
+                    owes.set(part.userId, part.amount)
+                }
                 this.prisma.participant.create({
                     data: {
                         item: {
@@ -46,6 +53,33 @@ export class ExpenseService {
                         amount: part.amount,
                         isAccepted: ExpenseStatus.NONE,
                     },
+                })
+            }
+        }
+        for (const [userId, amount] of owes) {
+            const owe = await this.prisma.owes.findFirst({
+                where: {
+                    OR: [
+                        { user1Id: userId, user2Id: createExpenseDto.payerId },
+                        { user1Id: createExpenseDto.payerId, user2Id: userId },
+                    ],
+                },
+            })
+            if (owe) {
+                if (owe.user1Id === userId) {
+                    await this.prisma.owes.update({
+                        where: { id: owe.id },
+                        data: { amount: owe.amount + amount },
+                    })
+                } else {
+                    await this.prisma.owes.update({
+                        where: { id: owe.id },
+                        data: { amount: owe.amount - amount },
+                    })
+                }
+            } else {
+                await this.prisma.owes.create({
+                    data: { amount: amount, user1Id: userId, user2Id: createExpenseDto.payerId },
                 })
             }
         }
@@ -71,5 +105,12 @@ export class ExpenseService {
 
     async remove(id: string) {
         return 'This action adds a new expense'
+    }
+
+    async findAllPayedByUser(id: string): Promise<Expense[]> {
+        return this.prisma.expense.findMany({
+            where: { payerId: id },
+            include: { items: { include: { participants: true } } },
+        })
     }
 }

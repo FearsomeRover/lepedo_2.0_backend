@@ -3,7 +3,8 @@ import { ExpenseService } from './expense.service'
 import { CreateExpenseDto } from './dto/create-expense.dto'
 import { UpdateExpenseDto } from './dto/update-expense.dto'
 import { Expense } from '@prisma/client'
-
+import { ApiTags } from '@nestjs/swagger'
+@ApiTags('expense')
 @Controller('expense')
 export class ExpenseController {
     constructor(private readonly expenseService: ExpenseService) {}
@@ -16,6 +17,11 @@ export class ExpenseController {
     @Get()
     findAll() {
         return this.expenseService.findAll()
+    }
+
+    @Get('/payer/:id')
+    findAllByUser(@Param('id') id: string) {
+        return this.expenseService.findAllPayedByUser(id)
     }
 
     @Get(':id')

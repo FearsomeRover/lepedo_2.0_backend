@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { QrService } from './qr.service'
 import { CreateQrDto } from './dto/create-qr.dto'
 import { UpdateQrDto } from './dto/update-qr.dto'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('qr')
 @Controller('qr')
 export class QrController {
     constructor(private readonly qrService: QrService) {}

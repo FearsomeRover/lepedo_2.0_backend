@@ -12,7 +12,7 @@ model User {
   name            String
   revTag          String        @unique
   color           String
-  auth0sub        String        @unique
+  auth0sub        String?       @unique
   payed           Expense[]     @relation("Payer")
   participatedIn  Participant[]
   transferredTo   Transfer[]    @relation("userTo")
@@ -77,7 +77,7 @@ enum ExpenseStatus {
 
 model Owes {
   id      String @id @default(uuid())
-  user1   User   @relation("user1", fields: [user1Id], references: [id])
+  user1   User   @relation("user1", fields: [user1Id], references: [id]) //if this person pays the owed amount, it is settled
   user2   User   @relation("user2", fields: [user2Id], references: [id])
   amount  Int
   user1Id String

@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TransferService } from './transfer.service'
 import { CreateTransferDto } from './dto/create-transfer.dto'
 import { UpdateTransferDto } from './dto/update-transfer.dto'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('transfer')
 @Controller('transfer')
 export class TransferController {
     constructor(private readonly transferService: TransferService) {}

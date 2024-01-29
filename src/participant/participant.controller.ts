@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ParticipantService } from './participant.service'
 import { CreateParticipantDto } from './dto/create-participant.dto'
 import { ExpenseStatus } from '@prisma/client'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('participant')
 @Controller('participant')
 export class ParticipantController {
     constructor(private readonly participantService: ParticipantService) {}

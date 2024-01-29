@@ -1,9 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { CreateUserDto } from './dto/createUser.dto'
-import { User } from '@prisma/client'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { UserModule } from './user.module'
+import { Debt } from './entities/debt.entity'
+import { User } from './entities/user.entity'
+import { BasicUserDto } from './dto/BasicUser.dto'
 
 interface TableUser {
     user: User
@@ -16,9 +18,9 @@ interface TableUser {
 @Injectable()
 export class UserService {
     constructor(private readonly prisma: PrismaService) {}
-    async create(createUserDto: CreateUserDto): Promise<User> {
+    async create(createUserDto: CreateUserDto): Promise<BasicUserDto> {
         try {
-            return await this.prisma.user.create({ data: createUserDto })
+            return this.prisma.user.create({ data: createUserDto })
         } catch (e) {
             if (e.code === 'P2002') {
                 ///failed unique constraint
@@ -39,7 +41,7 @@ export class UserService {
         return link
     }
 
-    async findAll() {
+    async findAll(): Promise<BasicUserDto[]> {
         return await this.prisma.user.findMany({})
     }
 
@@ -54,7 +56,7 @@ export class UserService {
             })) === null
         )
     }
-    async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    async update(id: string, updateUserDto: UpdateUserDto): Promise<BasicUserDto> {
         try {
             return await this.prisma.user.update({
                 where: { id },
@@ -68,6 +70,23 @@ export class UserService {
             }
         }
     }
+    async findOthers(id: string): Promise<Array<Debt>> {
+        let map = []
+        const positive = await this.prisma.owes.findMany({
+            where: { user1Id: id },
+        })
+        for (const owe of positive) {
+            map.push({ id: owe.user2Id, amount: owe.amount })
+        }
+        const negative = await this.prisma.owes.findMany({
+            where: { user2Id: id },
+        })
+        for (const owe of negative) {
+            map.push({ id: owe.user1Id, amount: owe.amount })
+        }
+        return map
+    }
+
     async thrifty() {
         const expenses = await this.prisma.expense.findMany({})
         console.log(expenses)
