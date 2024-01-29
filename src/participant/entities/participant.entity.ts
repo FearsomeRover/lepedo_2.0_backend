@@ -6,14 +6,10 @@ export class Participant {
     @IsUUID()
     id: string
 
-    date: string
-
     item: ExpenseItem
 
     user: User
 
-    @Max(1)
-    @Min(0)
     amount: number
 
     isAccepted: boolean

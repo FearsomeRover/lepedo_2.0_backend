@@ -1,11 +1,24 @@
 import { Injectable } from '@nestjs/common'
 import { CreateParticipantDto } from './dto/create-participant.dto'
-import { UpdateParticipantDto } from './dto/update-participant.dto'
+import { PrismaService } from 'src/prisma.service'
+import { ExpenseStatus } from '@prisma/client'
 
 @Injectable()
 export class ParticipantService {
+    constructor(private readonly prisma: PrismaService) {}
     create(createParticipantDto: CreateParticipantDto) {
-        return 'This action adds a new participant'
+        // return this.prisma.participant.create({
+        //     data: {
+        //         item: {
+        //             connect: { id: createParticipantDto.itemId },
+        //         },
+        //         user: {
+        //             connect: { id: createParticipantDto.userId },
+        //         },
+        //         shares: createParticipantDto.shares,
+        //         isAccepted: ExpenseStatus.NONE,
+        //     },
+        // })
     }
 
     findAll() {
@@ -16,8 +29,11 @@ export class ParticipantService {
         return `This action returns a #${id} participant`
     }
 
-    update(id: number, updateParticipantDto: UpdateParticipantDto) {
-        return `This action updates a #${id} participant`
+    update(id: string, status: ExpenseStatus) {
+        return this.prisma.participant.update({
+            where: { id },
+            data: { isAccepted: status },
+        })
     }
 
     remove(id: number) {

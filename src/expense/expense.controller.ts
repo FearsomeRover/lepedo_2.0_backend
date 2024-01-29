@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe } from '@nestjs/common'
 import { ExpenseService } from './expense.service'
 import { CreateExpenseDto } from './dto/create-expense.dto'
 import { UpdateExpenseDto } from './dto/update-expense.dto'
@@ -10,6 +10,7 @@ export class ExpenseController {
 
     @Post()
     create(@Body() createExpenseDto: CreateExpenseDto) {
+        console.log(createExpenseDto)
         return this.expenseService.create(createExpenseDto)
     }
 

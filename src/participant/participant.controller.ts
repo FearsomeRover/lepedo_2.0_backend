@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
 import { ParticipantService } from './participant.service'
 import { CreateParticipantDto } from './dto/create-participant.dto'
-import { UpdateParticipantDto } from './dto/update-participant.dto'
+import { ExpenseStatus } from '@prisma/client'
 
 @Controller('participant')
 export class ParticipantController {
@@ -23,8 +23,8 @@ export class ParticipantController {
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateParticipantDto: UpdateParticipantDto) {
-        return this.participantService.update(+id, updateParticipantDto)
+    update(@Param('id') id: string, @Body() status: ExpenseStatus) {
+        return this.participantService.update(id, status)
     }
 
     @Delete(':id')

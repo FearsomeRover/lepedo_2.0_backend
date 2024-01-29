@@ -14,7 +14,7 @@ export class User {
 
     @IsString()
     @IsNotEmpty()
-    revTag: string
+    revTag: string //store it without the @ sign pls
 
     @IsString()
     @IsNotEmpty()

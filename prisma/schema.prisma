@@ -47,7 +47,7 @@ model Participant {
   item          ExpenseItem   @relation(fields: [expenseItemId], references: [id])
   userId        String
   user          User          @relation(fields: [userId], references: [id])
-  shares        Float
+  amount        Float
   isAccepted    ExpenseStatus
 }
 
