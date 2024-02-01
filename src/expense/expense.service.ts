@@ -104,7 +104,20 @@ export class ExpenseService {
     }
 
     async remove(id: string) {
-        return 'This action adds a new expense'
+        const expense = await this.prisma.expense.findUnique({ where: { id } })
+        if (!expense) {
+            return 'This expense does not exist'
+        }
+        const items = await this.prisma.expenseItem.findMany({ where: { expenseId: id } })
+        for (const item of items) {
+            const participants = await this.prisma.participant.findMany({ where: { expenseItemId: item.id } })
+            for (const participant of participants) {
+                await this.prisma.participant.delete({ where: { id: participant.id } })
+            }
+            await this.prisma.expenseItem.delete({ where: { id: item.id } })
+        }
+        await this.prisma.expense.delete({ where: { id } })
+        //this yet creates an infinite money glitch in the owes system
     }
 
     async findAllPayedByUser(id: string): Promise<Expense[]> {
