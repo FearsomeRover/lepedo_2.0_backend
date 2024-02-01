@@ -47,6 +47,8 @@ export class UserService {
 
     async delete(id: string): Promise<void> {
         await this.findOne(id)
+        await this.prisma.owes.deleteMany({ where: { user1Id: id } })
+        await this.prisma.owes.deleteMany({ where: { user2Id: id } })
         await this.prisma.user.delete({ where: { id } })
     }
     async revTagAvailable(revTag: string): Promise<boolean> {

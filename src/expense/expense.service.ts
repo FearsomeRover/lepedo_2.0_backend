@@ -118,7 +118,7 @@ export class ExpenseService {
         }
         await this.prisma.expense.delete({ where: { id } })
         return 'Expense deleted'
-        //todo this yet creates an infinite money glitch in the owes system
+        //todo update owes !!!!!
     }
 
     async findAllPayedByUser(id: string): Promise<Expense[]> {
