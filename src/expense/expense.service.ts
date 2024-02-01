@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateExpenseDto } from './dto/create-expense.dto'
 import { UpdateExpenseDto } from './dto/update-expense.dto'
 import { PrismaService } from 'src/prisma.service'
@@ -117,7 +117,8 @@ export class ExpenseService {
             await this.prisma.expenseItem.delete({ where: { id: item.id } })
         }
         await this.prisma.expense.delete({ where: { id } })
-        //this yet creates an infinite money glitch in the owes system
+        return 'Expense deleted'
+        //todo this yet creates an infinite money glitch in the owes system
     }
 
     async findAllPayedByUser(id: string): Promise<Expense[]> {
