@@ -17,6 +17,9 @@ interface TableUser {
 }
 @Injectable()
 export class UserService {
+    findAuth0(id: string): Promise<BasicUserDto> {
+        return this.prisma.user.findUnique({ where: { auth0sub: id } })
+    }
     constructor(private readonly prisma: PrismaService) {}
     async create(createUserDto: CreateUserDto): Promise<BasicUserDto> {
         try {
@@ -39,6 +42,9 @@ export class UserService {
             throw new NotFoundException('This user does not exist')
         }
         return link
+    }
+    findFriends(id: string): Promise<BasicUserDto[]> {
+        throw new Error('Method not implemented.')
     }
 
     async findAll(): Promise<BasicUserDto[]> {
