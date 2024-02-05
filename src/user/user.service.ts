@@ -17,6 +17,9 @@ interface TableUser {
 }
 @Injectable()
 export class UserService {
+    findAuth0(id: string): Promise<BasicUserDto> {
+        return this.prisma.user.findUnique({ where: { auth0sub: id } })
+    }
     constructor(private readonly prisma: PrismaService) {}
     async create(createUserDto: CreateUserDto): Promise<BasicUserDto> {
         try {
@@ -39,6 +42,34 @@ export class UserService {
             throw new NotFoundException('This user does not exist')
         }
         return link
+    }
+    async findFriends(id: string): Promise<BasicUserDto[]> {
+        const f1 = await this.prisma.owes.findMany({
+            where: { user1Id: id },
+            include: { user2: true },
+        })
+        const f2 = await this.prisma.owes.findMany({
+            where: { user2Id: id },
+            include: { user1: true },
+        })
+        const res1 = f1.map(x => {
+            return {
+                id: x.user2.id,
+                name: x.user2.name,
+                revTag: x.user2.revTag,
+                color: x.user2.color,
+            }
+        })
+        const res2 = f2.map(x => {
+            return {
+                id: x.user1.id,
+                name: x.user1.name,
+                revTag: x.user1.revTag,
+                color: x.user1.color,
+            }
+        })
+
+        return [...res1, ...res2]
     }
 
     async findAll(): Promise<BasicUserDto[]> {

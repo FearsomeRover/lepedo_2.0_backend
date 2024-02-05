@@ -11,9 +11,6 @@ import { BasicUserDto } from './dto/BasicUser.dto'
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
-    /**
-     * This endpoint returns all users
-     */
     @Get()
     findAll(): Promise<BasicUserDto[]> {
         return this.userService.findAll()
@@ -42,5 +39,14 @@ export class UserController {
     @Get('/revTag/:revTag')
     revTagAvailable(@Param('revTag') revTag: string): Promise<boolean> {
         return this.userService.revTagAvailable(revTag)
+    }
+
+    @Get('/:id/friends')
+    findFriends(@Param('id') id: string): Promise<Array<BasicUserDto>> {
+        return this.userService.findFriends(id)
+    }
+    @Get('/auth0/:id')
+    findAuth0(@Param('id') id: string): Promise<BasicUserDto> {
+        return this.userService.findAuth0(id)
     }
 }
