@@ -6,6 +6,7 @@ import { UserModule } from './user.module'
 import { Debt } from './entities/debt.entity'
 import { User } from './entities/user.entity'
 import { BasicUserDto } from './dto/BasicUser.dto'
+import { TableRow } from './dto/TableRow.dto'
 
 interface TableUser {
     user: User
@@ -17,6 +18,9 @@ interface TableUser {
 }
 @Injectable()
 export class UserService {
+    getUserTable(id: string): Promise<TableRow[]> {
+        throw new Error('Method not implemented.')
+    }
     findAuth0(id: string): Promise<BasicUserDto> {
         return this.prisma.user.findUnique({ where: { auth0sub: id } })
     }
@@ -35,13 +39,20 @@ export class UserService {
     }
 
     async findOne(id: string) {
-        const link = await this.prisma.user.findUnique({
+        const res = await this.prisma.user.findUnique({
             where: { id },
+            select: {
+                id: true,
+                name: true,
+                revTag: true,
+                color: true,
+                auth0sub: false,
+            },
         })
-        if (!link) {
+        if (!res) {
             throw new NotFoundException('This user does not exist')
         }
-        return link
+        return res
     }
     async findFriends(id: string): Promise<BasicUserDto[]> {
         const f1 = await this.prisma.owes.findMany({
@@ -73,7 +84,15 @@ export class UserService {
     }
 
     async findAll(): Promise<BasicUserDto[]> {
-        return await this.prisma.user.findMany({})
+        return await this.prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                revTag: true,
+                color: true,
+                auth0sub: false,
+            },
+        })
     }
 
     async delete(id: string): Promise<void> {

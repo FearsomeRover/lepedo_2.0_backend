@@ -6,6 +6,7 @@ import { Debt } from './entities/debt.entity'
 import { ApiProperty, ApiTags } from '@nestjs/swagger'
 import { User } from './entities/user.entity'
 import { BasicUserDto } from './dto/BasicUser.dto'
+import { TableRow } from './dto/TableRow.dto'
 
 @ApiTags('user')
 @Controller('user')
@@ -48,5 +49,9 @@ export class UserController {
     @Get('/auth0/:id')
     findAuth0(@Param('id') id: string): Promise<BasicUserDto> {
         return this.userService.findAuth0(id)
+    }
+    @Get('/:id/table')
+    getUserTable(@Param('id') id: string): Promise<Array<TableRow>> {
+        return this.userService.getUserTable(id)
     }
 }

@@ -3,6 +3,7 @@ import { QrService } from './qr.service'
 import { CreateQrDto } from './dto/create-qr.dto'
 import { UpdateQrDto } from './dto/update-qr.dto'
 import { ApiTags } from '@nestjs/swagger'
+import { Qr } from './entities/qr.entity'
 
 @ApiTags('qr')
 @Controller('qr')
@@ -15,22 +16,22 @@ export class QrController {
     }
 
     @Get()
-    findAll() {
+    findAll(): Promise<Qr[]> {
         return this.qrService.findAll()
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.qrService.findOne(+id)
+    findOne(@Param('id') id: string): Promise<Qr> {
+        return this.qrService.findOne(id)
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateQrDto: UpdateQrDto) {
-        return this.qrService.update(+id, updateQrDto)
+    update(@Param('id') id: string, @Body() updateQrDto: UpdateQrDto): Promise<Qr> {
+        return this.qrService.update(id, updateQrDto)
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.qrService.remove(+id)
+    remove(@Param('id') id: string): Promise<void> {
+        return this.qrService.remove(id)
     }
 }
