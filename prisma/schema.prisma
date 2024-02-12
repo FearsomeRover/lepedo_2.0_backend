@@ -78,12 +78,12 @@ enum ExpenseStatus {
 
 model UserRelation {
   id              String @id @default(uuid())
-  userFrom        User   @relation("user1", fields: [user1Id], references: [id]) //if this person pays the owed amount, it is settled
+  userFrom        User   @relation("user1", fields: [user1Id], references: [id]) //if this is the tables owner
   userTo          User   @relation("user2", fields: [user2Id], references: [id])
-  owesFrom        Int
-  owesTo          Int
-  transferredFrom Int
-  transferredTo   Int
+  owesFrom        Int //this is "you owe him"
+  owesTo          Int //this is "he owes you"
+  transferredFrom Int //this is the amount you transferred
+  transferredTo   Int //this is the amount you received as transfer
   user1Id         String
   user2Id         String
 }

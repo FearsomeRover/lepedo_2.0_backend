@@ -32,10 +32,6 @@ export class UserController {
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
         return this.userService.update(id, updateUserDto)
     }
-    @Get('/:id/debts')
-    findOthers(@Param('id') id: string): Promise<Array<Debt>> {
-        return this.userService.findOthers(id)
-    }
 
     @Get('/revTag/:revTag')
     revTagAvailable(@Param('revTag') revTag: string): Promise<boolean> {
