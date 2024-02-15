@@ -19,9 +19,9 @@ export class ExpenseController {
         return this.expenseService.findAll()
     }
 
-    @Get('/payer/:id')
+    @Get('/user/:id')
     findAllByUser(@Param('id') id: string) {
-        return this.expenseService.findAllPayedByUser(id)
+        return this.expenseService.findAllByUser(id)
     }
 
     @Get(':id')

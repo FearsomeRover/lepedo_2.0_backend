@@ -6,6 +6,7 @@ import { UserModule } from './user.module'
 import { Debt } from './entities/debt.entity'
 import { User } from './entities/user.entity'
 import { BasicUserDto } from './dto/BasicUser.dto'
+import { TableRow } from './dto/TableRow.dto'
 
 interface TableUser {
     user: User
@@ -17,6 +18,58 @@ interface TableUser {
 }
 @Injectable()
 export class UserService {
+    async getUserTable(id: string): Promise<TableRow[]> {
+        const data = await this.prisma.userRelation.findMany({
+            where: { OR: [{ user1Id: id }, { user2Id: id }] },
+            select: {
+                userFrom: {
+                    select: {
+                        id: true,
+                        name: true,
+                        revTag: true,
+                        color: true,
+                    },
+                },
+                userTo: {
+                    select: {
+                        id: true,
+                        name: true,
+                        revTag: true,
+                        color: true,
+                    },
+                },
+                owesFrom: true,
+                owesTo: true,
+                transferredFrom: true,
+                transferredTo: true,
+            },
+        })
+        return data.map(x => {
+            if (x.userFrom.id === id) {
+                //id is on the userFrom side
+                const row = {
+                    user: x.userTo,
+                    owesYou: x.owesTo,
+                    youOwe: x.owesFrom,
+                    transferredTo: x.transferredFrom,
+                    transferredFrom: x.transferredTo,
+                    total: 0,
+                }
+                row.total = row.owesYou - row.youOwe + row.transferredTo - row.transferredFrom
+                return row
+            }
+            const row = {
+                user: x.userFrom,
+                owesYou: x.owesFrom,
+                youOwe: x.owesTo,
+                transferredTo: x.transferredTo,
+                transferredFrom: x.transferredFrom,
+                total: 0,
+            }
+            row.total = row.owesYou - row.youOwe + row.transferredTo - row.transferredFrom
+            return row
+        })
+    }
     findAuth0(id: string): Promise<BasicUserDto> {
         return this.prisma.user.findUnique({ where: { auth0sub: id } })
     }
@@ -35,51 +88,76 @@ export class UserService {
     }
 
     async findOne(id: string) {
-        const link = await this.prisma.user.findUnique({
+        const res = await this.prisma.user.findUnique({
             where: { id },
+            select: {
+                id: true,
+                name: true,
+                revTag: true,
+                color: true,
+                auth0sub: false,
+            },
         })
-        if (!link) {
+        if (!res) {
             throw new NotFoundException('This user does not exist')
         }
-        return link
+        return res
     }
     async findFriends(id: string): Promise<BasicUserDto[]> {
-        const f1 = await this.prisma.owes.findMany({
-            where: { user1Id: id },
-            include: { user2: true },
+        const res = await this.prisma.userRelation.findMany({
+            where: { OR: [{ user1Id: id }, { user2Id: id }] },
+            select: {
+                userFrom: {
+                    select: {
+                        id: true,
+                        name: true,
+                        revTag: true,
+                        color: true,
+                    },
+                },
+                userTo: {
+                    select: {
+                        id: true,
+                        name: true,
+                        revTag: true,
+                        color: true,
+                    },
+                },
+            },
         })
-        const f2 = await this.prisma.owes.findMany({
-            where: { user2Id: id },
-            include: { user1: true },
-        })
-        const res1 = f1.map(x => {
+        return res.map(x => {
+            if (x.userFrom.id === id) {
+                return {
+                    id: x.userTo.id,
+                    name: x.userTo.name,
+                    revTag: x.userTo.revTag,
+                    color: x.userTo.color,
+                }
+            }
             return {
-                id: x.user2.id,
-                name: x.user2.name,
-                revTag: x.user2.revTag,
-                color: x.user2.color,
+                id: x.userFrom.id,
+                name: x.userFrom.name,
+                revTag: x.userFrom.revTag,
+                color: x.userFrom.color,
             }
         })
-        const res2 = f2.map(x => {
-            return {
-                id: x.user1.id,
-                name: x.user1.name,
-                revTag: x.user1.revTag,
-                color: x.user1.color,
-            }
-        })
-
-        return [...res1, ...res2]
     }
 
     async findAll(): Promise<BasicUserDto[]> {
-        return await this.prisma.user.findMany({})
+        return await this.prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                revTag: true,
+                color: true,
+                auth0sub: false,
+            },
+        })
     }
 
     async delete(id: string): Promise<void> {
         await this.findOne(id)
-        await this.prisma.owes.deleteMany({ where: { user1Id: id } })
-        await this.prisma.owes.deleteMany({ where: { user2Id: id } })
+        await this.prisma.userRelation.deleteMany({ where: { OR: [{ user1Id: id }, { user2Id: id }] } })
         await this.prisma.user.delete({ where: { id } })
     }
     async revTagAvailable(revTag: string): Promise<boolean> {
@@ -102,22 +180,6 @@ export class UserService {
                 throw e
             }
         }
-    }
-    async findOthers(id: string): Promise<Array<Debt>> {
-        let map = []
-        const positive = await this.prisma.owes.findMany({
-            where: { user1Id: id },
-        })
-        for (const owe of positive) {
-            map.push({ id: owe.user2Id, amount: owe.amount })
-        }
-        const negative = await this.prisma.owes.findMany({
-            where: { user2Id: id },
-        })
-        for (const owe of negative) {
-            map.push({ id: owe.user1Id, amount: owe.amount })
-        }
-        return map
     }
 
     async thrifty() {

@@ -8,18 +8,18 @@ datasource db {
 }
 
 model User {
-  id              String        @id @default(uuid())
+  id              String         @id @default(uuid())
   name            String
-  revTag          String        @unique
+  revTag          String         @unique
   color           String
-  auth0sub        String?       @unique
-  payed           Expense[]     @relation("Payer")
+  auth0sub        String?        @unique
+  payed           Expense[]      @relation("Payer")
   participatedIn  Participant[]
-  transferredTo   Transfer[]    @relation("userTo")
-  transferredFrom Transfer[]    @relation("userFrom")
+  transferredTo   Transfer[]     @relation("userTo")
+  transferredFrom Transfer[]     @relation("userFrom")
   QR              QR[]
-  Owes1           Owes[]        @relation("user1")
-  Owes2           Owes[]        @relation("user2")
+  RelationFrom    UserRelation[] @relation("user1")
+  RelationTo      UserRelation[] @relation("user2")
 }
 
 model Expense {
@@ -64,6 +64,7 @@ model Transfer {
 
 model QR {
   id      String @id @default(uuid())
+  title   String
   amount  Int
   payToId String
   payTo   User   @relation(fields: [payToId], references: [id])
@@ -75,11 +76,14 @@ enum ExpenseStatus {
   NONE
 }
 
-model Owes {
-  id      String @id @default(uuid())
-  user1   User   @relation("user1", fields: [user1Id], references: [id]) //if this person pays the owed amount, it is settled
-  user2   User   @relation("user2", fields: [user2Id], references: [id])
-  amount  Int
-  user1Id String
-  user2Id String
+model UserRelation {
+  id              String @id @default(uuid())
+  userFrom        User   @relation("user1", fields: [user1Id], references: [id]) //if this is the tables owner
+  userTo          User   @relation("user2", fields: [user2Id], references: [id])
+  owesFrom        Int //this is "you owe him"
+  owesTo          Int //this is "he owes you"
+  transferredFrom Int //this is the amount you transferred
+  transferredTo   Int //this is the amount you received as transfer
+  user1Id         String
+  user2Id         String
 }
