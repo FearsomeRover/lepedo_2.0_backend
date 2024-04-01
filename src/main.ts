@@ -18,12 +18,14 @@ async function bootstrap() {
         .setTitle('Lepedo')
         .setDescription('Lepedo api description')
         .setVersion('2.0')
-        //.setContact('Bujdi', 'anyádat próbáld kontaktálni', 'fasszopoda@gmail.com')
+        .addBearerAuth()
         .setLicense('MIT', 'https://opensource.org/licenses/MIT')
         .build()
     const document = SwaggerModule.createDocument(app, config)
     SwaggerModule.setup('api', app, document)
-    app.enableCors()
+    app.enableCors({
+        allowedHeaders: ['Authorization', 'Content-Type'],
+    })
     await app.listen(PORT)
 }
 bootstrap()

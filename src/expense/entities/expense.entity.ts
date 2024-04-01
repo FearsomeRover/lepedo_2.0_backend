@@ -43,4 +43,10 @@ export class Expense {
     @IsDateString()
     @IsOptional()
     date: string
+
+    /**
+     * If the expense is accepted
+     * @example true
+     */
+    isAccepted: boolean
 }

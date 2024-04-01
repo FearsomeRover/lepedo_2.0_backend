@@ -61,6 +61,7 @@ export class ExpenseService {
     }
 
     async findAll(): Promise<Expense[]> {
+        console.log('asdasd')
         return this.prisma.expense.findMany({
             include: { payer: true, items: { include: { participants: true } } },
         })

@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, UseGuards } from '@nestjs/common'
 import { ExpenseService } from './expense.service'
 import { CreateExpenseDto } from './dto/create-expense.dto'
 import { UpdateExpenseDto } from './dto/update-expense.dto'
 import { Expense } from '@prisma/client'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import { AuthorizationGuard } from 'src/auth/auth.guard'
 @ApiTags('expense')
 @Controller('expense')
 export class ExpenseController {
@@ -15,6 +16,7 @@ export class ExpenseController {
     }
 
     @Get()
+    @ApiBearerAuth()
     findAll() {
         return this.expenseService.findAll()
     }
@@ -23,7 +25,6 @@ export class ExpenseController {
     findAllByUser(@Param('id') id: string) {
         return this.expenseService.findAllByUser(id)
     }
-
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.expenseService.findOne(id)

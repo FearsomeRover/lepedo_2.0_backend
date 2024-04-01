@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL_NEON")
 }
 
 model User {
@@ -23,13 +23,14 @@ model User {
 }
 
 model Expense {
-  id      String        @id @default(uuid())
-  title   String
-  amount  Int
-  payerId String
-  payer   User          @relation("Payer", fields: [payerId], references: [id])
-  items   ExpenseItem[]
-  date    String?
+  id         String        @id @default(uuid())
+  title      String
+  amount     Int
+  payerId    String
+  payer      User          @relation("Payer", fields: [payerId], references: [id])
+  items      ExpenseItem[]
+  date       String?
+  isAccepted Boolean
 }
 
 model ExpenseItem {
