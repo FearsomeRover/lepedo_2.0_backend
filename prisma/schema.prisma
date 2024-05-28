@@ -8,11 +8,10 @@ datasource db {
 }
 
 model User {
-  id              String         @id @default(uuid())
+  id              String         @id
   name            String
   revTag          String         @unique
   color           String
-  auth0sub        String?        @unique
   payed           Expense[]      @relation("Payer")
   participatedIn  Participant[]
   transferredTo   Transfer[]     @relation("userTo")

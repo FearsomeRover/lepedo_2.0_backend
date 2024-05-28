@@ -4,7 +4,6 @@ import { CreateExpenseDto } from './dto/create-expense.dto'
 import { UpdateExpenseDto } from './dto/update-expense.dto'
 import { Expense } from '@prisma/client'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import { AuthorizationGuard } from 'src/auth/auth.guard'
 @ApiTags('expense')
 @Controller('expense')
 export class ExpenseController {

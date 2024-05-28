@@ -1,29 +1,12 @@
-import { CanActivate, ExecutionContext, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
-import { Request, Response } from 'express'
-import { auth, InvalidTokenError, UnauthorizedError } from 'express-oauth2-jwt-bearer'
-import { promisify } from 'util'
+import { Injectable } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
 
 @Injectable()
-export class AuthorizationGuard implements CanActivate {
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request = context.switchToHttp().getRequest<Request>()
-        const response = context.switchToHttp().getResponse<Response>()
+export class OauthGuard extends AuthGuard('auth0') {}
 
-        const validateAccessToken = promisify(auth())
-        try {
-            const res = await validateAccessToken(request, response)
-
-            return true
-        } catch (error) {
-            if (error instanceof InvalidTokenError) {
-                throw new UnauthorizedException('Bad credentials')
-            }
-
-            if (error instanceof UnauthorizedError) {
-                throw new UnauthorizedException('Requires authentication')
-            }
-
-            throw new InternalServerErrorException()
-        }
+@Injectable()
+export class OptionalAuthGuard extends AuthGuard('jwt') {
+    handleRequest<UserEntity>(_: any, user: UserEntity): UserEntity {
+        return user
     }
 }

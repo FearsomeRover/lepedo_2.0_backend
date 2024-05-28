@@ -26,7 +26,6 @@ export class QrService {
                 payTo: true,
             },
         })
-        res.map(qr => delete qr.payTo.auth0sub)
         return res
     }
 
@@ -40,7 +39,6 @@ export class QrService {
             },
         })
         if (!res) throw new NotFoundException()
-        delete res.payTo.auth0sub
         return res
     }
 
@@ -57,7 +55,6 @@ export class QrService {
                     payTo: true,
                 },
             })
-            delete res.payTo.auth0sub
             return res
         } catch (e) {
             if (e.code === 'P2025') {

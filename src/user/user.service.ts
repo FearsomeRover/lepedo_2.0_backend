@@ -1,12 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
-import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
-import { UserModule } from './user.module'
-import { Debt } from './entities/debt.entity'
 import { User } from './entities/user.entity'
 import { BasicUserDto } from './dto/BasicUser.dto'
 import { TableRow } from './dto/TableRow.dto'
+import { Auth0Profile } from 'src/types/auth.types'
+const colors = ['#D9515E', '#51BB88', '#F86E0B', '#0F8A8E', '#FFB100', '#9370DB', '#52BBE8']
 
 interface TableUser {
     user: User
@@ -18,6 +17,20 @@ interface TableUser {
 }
 @Injectable()
 export class UserService {
+    constructor(private readonly prisma: PrismaService) {}
+    async createUserForAuth0User(auth0Profile: Auth0Profile): Promise<User> {
+        return this.prisma.user.create({
+            data: {
+                id: auth0Profile.sub,
+                name: auth0Profile.name,
+                revTag: '',
+                color: colors[(auth0Profile.name.charCodeAt(0) + auth0Profile.name.charCodeAt(2)) % colors.length],
+            },
+        })
+    }
+    async getUserByAuthId(authId: string): Promise<User | undefined> {
+        return this.prisma.user.findFirst({ where: { id: authId } })
+    }
     async getUserTable(id: string): Promise<TableRow[]> {
         const data = await this.prisma.userRelation.findMany({
             where: { OR: [{ user1Id: id }, { user2Id: id }] },
@@ -71,20 +84,7 @@ export class UserService {
         })
     }
     findAuth0(id: string): Promise<BasicUserDto> {
-        return this.prisma.user.findUnique({ where: { auth0sub: id } })
-    }
-    constructor(private readonly prisma: PrismaService) {}
-    async create(createUserDto: CreateUserDto): Promise<BasicUserDto> {
-        try {
-            return this.prisma.user.create({ data: createUserDto })
-        } catch (e) {
-            if (e.code === 'P2002') {
-                ///failed unique constraint
-                throw new ConflictException('Revolut tag already in use')
-            } else {
-                throw e
-            }
-        }
+        return this.prisma.user.findUnique({ where: { id } })
     }
 
     async findOne(id: string) {
@@ -95,7 +95,6 @@ export class UserService {
                 name: true,
                 revTag: true,
                 color: true,
-                auth0sub: false,
             },
         })
         if (!res) {
@@ -150,7 +149,6 @@ export class UserService {
                 name: true,
                 revTag: true,
                 color: true,
-                auth0sub: false,
             },
         })
     }

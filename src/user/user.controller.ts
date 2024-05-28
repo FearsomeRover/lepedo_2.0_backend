@@ -1,10 +1,7 @@
-import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { UserService } from './user.service'
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
-import { Debt } from './entities/debt.entity'
 import { ApiProperty, ApiTags } from '@nestjs/swagger'
-import { User } from './entities/user.entity'
 import { BasicUserDto } from './dto/BasicUser.dto'
 import { TableRow } from './dto/TableRow.dto'
 
@@ -15,10 +12,6 @@ export class UserController {
     @Get()
     findAll(): Promise<BasicUserDto[]> {
         return this.userService.findAll()
-    }
-    @Post()
-    create(@Body() createUserDto: CreateUserDto): Promise<BasicUserDto> {
-        return this.userService.create(createUserDto)
     }
     @Get(':id')
     findOne(@Param('id') id: string): Promise<BasicUserDto> {
