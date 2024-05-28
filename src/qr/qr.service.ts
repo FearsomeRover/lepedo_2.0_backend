@@ -3,17 +3,18 @@ import { CreateQrDto } from './dto/create-qr.dto'
 import { UpdateQrDto } from './dto/update-qr.dto'
 import { PrismaService } from 'src/prisma.service'
 import { Qr } from './entities/qr.entity'
+import { User } from 'src/user/entities/user.entity'
 
 @Injectable()
 export class QrService {
     constructor(private readonly prisma: PrismaService) {}
-    async create(createQrDto: CreateQrDto): Promise<string> {
+    async create(user: User, createQrDto: CreateQrDto): Promise<string> {
         const res = await this.prisma.qR.create({
             data: {
                 title: createQrDto.title,
                 amount: createQrDto.amount,
                 payTo: {
-                    connect: { id: createQrDto.payToId },
+                    connect: { id: user.id },
                 },
             },
         })
@@ -26,7 +27,6 @@ export class QrService {
                 payTo: true,
             },
         })
-        res.map(qr => delete qr.payTo.auth0sub)
         return res
     }
 
@@ -40,7 +40,6 @@ export class QrService {
             },
         })
         if (!res) throw new NotFoundException()
-        delete res.payTo.auth0sub
         return res
     }
 
@@ -57,7 +56,6 @@ export class QrService {
                     payTo: true,
                 },
             })
-            delete res.payTo.auth0sub
             return res
         } catch (e) {
             if (e.code === 'P2025') {

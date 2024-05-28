@@ -24,6 +24,7 @@ export class ExpenseService {
                 },
                 date: createExpenseDto.date,
                 amount: createExpenseDto.amount,
+                isAccepted: false,
             },
         })
         for (const item of createExpenseDto.items) {

@@ -7,9 +7,10 @@ import { TransferModule } from './transfer/transfer.module'
 import { ExpenseModule } from './expense/expense.module'
 import { ParticipantModule } from './participant/participant.module'
 import { QrModule } from './qr/qr.module'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
-    imports: [UserModule, TransferModule, ExpenseModule, ParticipantModule, QrModule],
+    imports: [UserModule, TransferModule, ExpenseModule, ParticipantModule, QrModule, AuthModule],
     controllers: [AppController],
     providers: [AppService, PrismaService],
 })

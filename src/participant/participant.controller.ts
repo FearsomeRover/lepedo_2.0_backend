@@ -1,23 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
 import { ParticipantService } from './participant.service'
 import { CreateParticipantDto } from './dto/create-participant.dto'
-import { ExpenseStatus } from '@prisma/client'
+import { ExpenseStatus, User } from '@prisma/client'
 import { ApiTags } from '@nestjs/swagger'
+import { CurrentUser } from 'src/auth/decorators/CurrentUser.decorator'
 
 @ApiTags('participant')
 @Controller('participant')
 export class ParticipantController {
     constructor(private readonly participantService: ParticipantService) {}
-
-    @Post()
-    create(@Body() createParticipantDto: CreateParticipantDto) {
-        return this.participantService.create(createParticipantDto)
-    }
-
-    @Get()
-    findAll() {
-        return this.participantService.findAll()
-    }
 
     @Get(':id')
     findOne(@Param('id') id: string) {
@@ -29,8 +20,12 @@ export class ParticipantController {
         return this.participantService.update(id, status)
     }
 
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.participantService.remove(+id)
+    @Patch(':id/accept')
+    accept(@CurrentUser() user: User, @Param('id') id: string) {
+        return this.participantService.accept(user, id)
+    }
+    @Patch(':id/decline')
+    decline(@CurrentUser() user: User, @Param('id') id: string) {
+        return this.participantService.decline(user, id)
     }
 }

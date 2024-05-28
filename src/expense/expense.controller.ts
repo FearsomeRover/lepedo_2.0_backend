@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, Validation
 import { ExpenseService } from './expense.service'
 import { CreateExpenseDto } from './dto/create-expense.dto'
 import { UpdateExpenseDto } from './dto/update-expense.dto'
-import { Expense } from '@prisma/client'
+import { Expense, User } from '@prisma/client'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import { AuthorizationGuard } from 'src/auth/auth.guard'
+import { JwtAuth } from 'src/auth/decorators/JwtAuth.decorator'
+import { CurrentUser } from 'src/auth/decorators/CurrentUser.decorator'
 @ApiTags('expense')
 @Controller('expense')
 export class ExpenseController {
@@ -15,15 +16,10 @@ export class ExpenseController {
         return this.expenseService.create(createExpenseDto)
     }
 
+    @JwtAuth()
     @Get()
-    @ApiBearerAuth()
-    findAll() {
-        return this.expenseService.findAll()
-    }
-
-    @Get('/user/:id')
-    findAllByUser(@Param('id') id: string) {
-        return this.expenseService.findAllByUser(id)
+    findAllByUser(@CurrentUser() user: User) {
+        return this.expenseService.findAllByUser(user.id)
     }
     @Get(':id')
     findOne(@Param('id') id: string) {

@@ -1,24 +1,30 @@
-import { Injectable } from '@nestjs/common'
+import { ForbiddenException, Injectable } from '@nestjs/common'
 import { CreateParticipantDto } from './dto/create-participant.dto'
 import { PrismaService } from 'src/prisma.service'
-import { ExpenseStatus } from '@prisma/client'
+import { ExpenseStatus, User } from '@prisma/client'
 
 @Injectable()
 export class ParticipantService {
+    decline(user: User, id: string) {
+        try {
+            this.prisma.participant.update({
+                where: { id, userId: user.id },
+                data: { isAccepted: ExpenseStatus.DECLINED },
+            })
+        } catch (e) {
+            throw new ForbiddenException("You don't have permission to edit this resource")
+        }
+    }
     constructor(private readonly prisma: PrismaService) {}
-    create(createParticipantDto: CreateParticipantDto) {
-        // return this.prisma.participant.create({
-        //     data: {
-        //         item: {
-        //             connect: { id: createParticipantDto.itemId },
-        //         },
-        //         user: {
-        //             connect: { id: createParticipantDto.userId },
-        //         },
-        //         shares: createParticipantDto.shares,
-        //         isAccepted: ExpenseStatus.NONE,
-        //     },
-        // })
+    accept(user: User, id: string) {
+        try {
+            this.prisma.participant.update({
+                where: { id, userId: user.id },
+                data: { isAccepted: ExpenseStatus.ACCEPTED },
+            })
+        } catch (e) {
+            throw new ForbiddenException("You don't have permission to edit this resource")
+        }
     }
 
     findAll() {
@@ -36,7 +42,7 @@ export class ParticipantService {
         })
     }
 
-    remove(id: number) {
+    remove(id: string) {
         return `This action removes a #${id} participant`
     }
 }

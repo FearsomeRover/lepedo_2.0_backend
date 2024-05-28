@@ -36,26 +36,18 @@ export class User {
     @IsNotEmpty()
     color: string
 
-    /**
-     * The auth0sub of the user
-     * @example "auth0|5f9a7a7a7a7a7a7a7a7a7a7a"
-     */
-    @IsNotEmpty()
-    @IsString()
-    auth0sub: string
+    @IsOptional()
+    payed?: Expense[]
 
     @IsOptional()
-    payed: Expense[]
+    participatedIn?: Participant[]
 
     @IsOptional()
-    participatedIn: Participant[]
+    transferredTo?: Transfer[]
 
     @IsOptional()
-    transferredTo: Transfer[]
+    transferredFrom?: Transfer[]
 
     @IsOptional()
-    transferredFrom: Transfer[]
-
-    @IsOptional()
-    QR: Qr[]
+    QR?: Qr[]
 }
