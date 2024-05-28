@@ -24,9 +24,11 @@ export class UserController {
     delete(@Param('id') id: string): Promise<void> {
         return this.userService.delete(id)
     }
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-        return this.userService.update(id, updateUserDto)
+
+    @JwtAuth()
+    @Patch()
+    update(@CurrentUser() user: User, @Body() updateUserDto: UpdateUserDto) {
+        return this.userService.update(user.id, updateUserDto)
     }
     @Get('/revTag/:revTag')
     revTagAvailable(@Param('revTag') revTag: string): Promise<boolean> {

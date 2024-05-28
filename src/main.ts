@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
-import { PORT } from './util/environment'
 import { ValidationPipe } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
@@ -26,6 +25,6 @@ async function bootstrap() {
     app.enableCors({
         allowedHeaders: ['Authorization', 'Content-Type'],
     })
-    await app.listen(PORT)
+    await app.listen(process.env.PORT)
 }
 bootstrap()
