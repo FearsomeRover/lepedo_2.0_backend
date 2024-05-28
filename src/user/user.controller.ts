@@ -4,6 +4,9 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { ApiProperty, ApiTags } from '@nestjs/swagger'
 import { BasicUserDto } from './dto/BasicUser.dto'
 import { TableRow } from './dto/TableRow.dto'
+import { CurrentUser } from 'src/auth/decorators/CurrentUser.decorator'
+import { User } from '@prisma/client'
+import { JwtAuth } from 'src/auth/decorators/JwtAuth.decorator'
 
 @ApiTags('user')
 @Controller('user')
@@ -25,22 +28,22 @@ export class UserController {
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
         return this.userService.update(id, updateUserDto)
     }
-
     @Get('/revTag/:revTag')
     revTagAvailable(@Param('revTag') revTag: string): Promise<boolean> {
         return this.userService.revTagAvailable(revTag)
     }
-
-    @Get('/:id/friends')
-    findFriends(@Param('id') id: string): Promise<Array<BasicUserDto>> {
-        return this.userService.findFriends(id)
+    @JwtAuth()
+    @Get('friends')
+    findFriends(@CurrentUser() user: User): Promise<Array<BasicUserDto>> {
+        return this.userService.findFriends(user.id)
     }
     @Get('/auth0/:id')
     findAuth0(@Param('id') id: string): Promise<BasicUserDto> {
         return this.userService.findAuth0(id)
     }
-    @Get('/:id/table')
-    getUserTable(@Param('id') id: string): Promise<Array<TableRow>> {
-        return this.userService.getUserTable(id)
+    @JwtAuth()
+    @Get('table')
+    getUserTable(@CurrentUser() user: User): Promise<Array<TableRow>> {
+        return this.userService.getUserTable(user.id)
     }
 }

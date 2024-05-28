@@ -7,14 +7,6 @@ import { TableRow } from './dto/TableRow.dto'
 import { Auth0Profile } from 'src/types/auth.types'
 const colors = ['#D9515E', '#51BB88', '#F86E0B', '#0F8A8E', '#FFB100', '#9370DB', '#52BBE8']
 
-interface TableUser {
-    user: User
-    received: number
-    payed: number
-    transferred: number
-    gotTarnsferred: number
-    sum: number
-}
 @Injectable()
 export class UserService {
     constructor(private readonly prisma: PrismaService) {}
