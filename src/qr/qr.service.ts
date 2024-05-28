@@ -3,17 +3,18 @@ import { CreateQrDto } from './dto/create-qr.dto'
 import { UpdateQrDto } from './dto/update-qr.dto'
 import { PrismaService } from 'src/prisma.service'
 import { Qr } from './entities/qr.entity'
+import { User } from 'src/user/entities/user.entity'
 
 @Injectable()
 export class QrService {
     constructor(private readonly prisma: PrismaService) {}
-    async create(createQrDto: CreateQrDto): Promise<string> {
+    async create(user: User, createQrDto: CreateQrDto): Promise<string> {
         const res = await this.prisma.qR.create({
             data: {
                 title: createQrDto.title,
                 amount: createQrDto.amount,
                 payTo: {
-                    connect: { id: createQrDto.payToId },
+                    connect: { id: user.id },
                 },
             },
         })

@@ -3,7 +3,7 @@ import { OauthGuard } from './auth.guard'
 import { AuthService } from './auth.service'
 import { JwtAuth } from './decorators/JwtAuth.decorator'
 import { CurrentUser } from './decorators/CurrentUser.decorator'
-import { User } from 'src/user/entities/user.entity'
+import { User } from '@prisma/client'
 
 @Controller('auth')
 export class AuthController {

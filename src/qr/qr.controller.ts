@@ -4,15 +4,19 @@ import { CreateQrDto } from './dto/create-qr.dto'
 import { UpdateQrDto } from './dto/update-qr.dto'
 import { ApiTags } from '@nestjs/swagger'
 import { Qr } from './entities/qr.entity'
+import { JwtAuth } from 'src/auth/decorators/JwtAuth.decorator'
+import { CurrentUser } from 'src/auth/decorators/CurrentUser.decorator'
+import { User } from 'src/user/entities/user.entity'
 
 @ApiTags('qr')
 @Controller('qr')
 export class QrController {
     constructor(private readonly qrService: QrService) {}
 
+    @JwtAuth()
     @Post()
-    create(@Body() createQrDto: CreateQrDto) {
-        return this.qrService.create(createQrDto)
+    create(@Body() createQrDto: CreateQrDto, @CurrentUser() user: User) {
+        return this.qrService.create(user, createQrDto)
     }
 
     @Get()
